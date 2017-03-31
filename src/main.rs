@@ -19,11 +19,15 @@ struct Star {
 impl Star {
     fn new() -> Star {
         Star {
-            x: rand::thread_rng().gen_range(XY_RANGE * -1, XY_RANGE) as f32,
-            y: rand::thread_rng().gen_range(XY_RANGE * -1, XY_RANGE) as f32,
+            x: xy_range(),
+            y: xy_range(),
             z: rand::thread_rng().gen_range(1, MAX_DEPTH) as f32,
         }
     }
+}
+
+fn xy_range() -> f32 {
+    rand::thread_rng().gen_range(XY_RANGE * -1, XY_RANGE) as f32
 }
 
 fn main() {
@@ -48,6 +52,25 @@ fn main() {
                       c.transform, g);
             for star in &mut stars {
                 star.z -= 0.2;
+                if( star.z <= 0.0 ) {
+                    star.x = xy_range();
+                    star.y = xy_range();
+                    star.z = MAX_DEPTH as f32;
+                }
+                let k  = 128.0 / star.z;
+                let px = star.x * k + half_width;
+                let py = star.y * k + half_height;
+
+                if( px >= 0.0 && px <= 500.0 && py >= 0.0 && py <= 400.0 ) {
+                    let size = (1.0 - star.z / 32.0) * 5.0;
+                    let shade = (1.0 - star.z / 32.0);
+                    rectangle([0.0, 0.0, 0.0, 1.0],
+                      [px, py, size, size],
+                      c.transform, g);
+
+                    ctx.fillStyle = "rgb(" + shade + "," + shade + "," + shade + ")";
+                    ctx.fillRect(px,py,size,size);
+                }
             }
         });
     }
