@@ -67,9 +67,6 @@ fn main() {
                     rectangle([shade, shade, shade, 1.0],
                       [px , py, size, size],
                       c.transform, g);
-
-                    // ctx.fillStyle = "rgb(" + shade + "," + shade + "," + shade + ")";
-                    // ctx.fillRect(px,py,size,size);
                 }
             }
         });
