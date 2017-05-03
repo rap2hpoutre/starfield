@@ -45,10 +45,7 @@ fn main() {
 
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g| {
-            clear([1.0; 4], g);
-            rectangle([0.0, 0.0, 0.0, 1.0],
-                      [0.0, 0.0, WIDTH as f64, HEIGHT as f64],
-                      c.transform, g);
+            clear([0.0, 0.0, 0.0, 1.0], g);
             for star in &mut stars {
                 star.z -= 0.2;
                 if star.z <= 0.0 {
@@ -56,7 +53,6 @@ fn main() {
                     star.y = xy_range();
                     star.z = MAX_DEPTH as f64;
                 }
-                // Perspective projection of stars
                 let k  = 128.0 / star.z;
                 let px: f64 = star.x * k + half_width as f64;
                 let py: f64 = star.y * k + half_height as f64;
