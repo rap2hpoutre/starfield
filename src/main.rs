@@ -1,7 +1,14 @@
-extern crate piston_window;
+extern crate ggez;
 extern crate rand;
 
-use piston_window::*;
+use ggez::conf;
+use ggez::event::{self, EventHandler};
+use ggez::graphics::clear;
+use ggez::graphics::DrawMode::Fill;
+use ggez::graphics::{present, rectangle, set_background_color, set_color, Color, Rect};
+use ggez::{Context, ContextBuilder, GameResult};
+use ggez::timer::check_update_time;
+
 use rand::Rng;
 
 const WIDTH: u32 = 320;
@@ -10,61 +17,95 @@ const STARS_COUNT: u16 = 200;
 const XY_RANGE: i32 = 25;
 const MAX_DEPTH: u32 = 32;
 
+fn main() {
+  let ctx = &mut ContextBuilder::new("my_game", "Starfield")
+    .window_mode(conf::WindowMode::default().dimensions(WIDTH, HEIGHT))
+    .build()
+    .expect("aieee, could not create ggez context!");
+
+  let mut my_game = MyGame::new(ctx);
+
+  // Run!
+  match event::run(ctx, &mut my_game) {
+    Ok(_) => println!("Exited cleanly."),
+    Err(e) => println!("Error occured: {}", e),
+  }
+}
+
 struct Star {
-    x: f64,
-    y: f64,
-    z: f64,
+  x: f32,
+  y: f32,
+  z: f32,
 }
 
 impl Star {
-    fn new() -> Star {
-        Star {
-            x: xy_range(),
-            y: xy_range(),
-            z: rand::thread_rng().gen_range(1, MAX_DEPTH) as f64,
-        }
+  fn new() -> Star {
+    Star {
+      x: xy_range(),
+      y: xy_range(),
+      z: rand::thread_rng().gen_range(1, MAX_DEPTH) as f32,
     }
+  }
 }
 
-fn xy_range() -> f64 {
-    rand::thread_rng().gen_range(XY_RANGE * -1, XY_RANGE) as f64
+fn xy_range() -> f32 {
+  rand::thread_rng().gen_range(XY_RANGE * -1, XY_RANGE) as f32
 }
 
-fn main() {
-    let half_width = WIDTH / 2;
-    let half_height = HEIGHT / 2;
+struct MyGame {
+  half_width: f32,
+  half_height: f32,
+  stars: Vec<Star>,
+}
+
+impl MyGame {
+  fn new(_ctx: &mut ggez::Context) -> MyGame {
     let mut stars: Vec<Star> = vec![];
-
     for _ in 0..STARS_COUNT {
-        stars.push(Star::new());
+      stars.push(Star::new());
     }
-
-    let mut window: PistonWindow =
-        WindowSettings::new("Hello star", [WIDTH, HEIGHT])
-        .exit_on_esc(true).build().unwrap();
-
-    while let Some(e) = window.next() {
-        window.draw_2d(&e, |c, g| {
-            clear([0.0, 0.0, 0.0, 1.0], g);
-            for star in &mut stars {
-                star.z -= 0.2;
-                if star.z <= 0.0 {
-                    star.x = xy_range();
-                    star.y = xy_range();
-                    star.z = MAX_DEPTH as f64;
-                }
-                let k  = 128.0 / star.z;
-                let px: f64 = star.x * k + half_width as f64;
-                let py: f64 = star.y * k + half_height as f64;
-
-                if px >= 0.0 && px <= WIDTH as f64 && py >= 0.0 && py <= HEIGHT as f64  {
-                    let size = (1.0 - star.z / 32.0) * 5.0;
-                    let shade = (1.0 - star.z / 64.0) as f32;
-                    rectangle([shade, shade, shade, 1.0],
-                      [px , py, size, size],
-                      c.transform, g);
-                }
-            }
-        });
+    MyGame {
+      half_width: WIDTH as f32 / 2.0,
+      half_height: HEIGHT as f32  / 2.0,
+      stars: stars,
     }
+  }
+}
+
+impl EventHandler for MyGame {
+  fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+    while check_update_time(ctx, 30) {
+        for star in &mut self.stars {
+      star.z -= 0.2;
+      if star.z <= 0.0 {
+        star.x = xy_range();
+        star.y = xy_range();
+        star.z = MAX_DEPTH as f32;
+      }
+    }
+    }
+    
+    Ok(())
+  }
+  fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
+    clear(ctx);
+    set_background_color(ctx, Color::from_rgb_u32(0x000000));
+    for star in &mut self.stars {
+      let k = 128.0 / star.z;
+      let px: f32 = star.x * k + self.half_width;
+      let py: f32 = star.y * k + self.half_height;
+      if px >= 0.0 && px <= WIDTH as f32 && py >= 0.0 && py <= HEIGHT as f32 {
+        let size = (1.0 - star.z / 32.0) * 5.0;
+        set_color(ctx, Color::from_rgb_u32(0xFFFFFF)).ok();
+        rectangle(
+          ctx,
+          Fill,
+          Rect::new(px, py, size, size),
+        )
+        .ok();
+      }
+    }
+    present(ctx);
+    Ok(())
+  }
 }
