@@ -4,7 +4,6 @@ extern crate rand;
 use ggez::conf;
 use ggez::event::{self, EventHandler};
 use ggez::graphics::clear;
-use ggez::graphics::DrawMode::Fill;
 use ggez::graphics::{present, Color, Rect};
 use ggez::{Context, ContextBuilder, GameResult};
 use ggez::timer::check_update_time;
@@ -101,7 +100,7 @@ impl EventHandler for MyGame {
           ggez::graphics::draw(ctx, &rectangle, (ggez::mint::Point2 { x: 0.0, y: 0.0 },)).ok();
       }
     }
-    present(ctx);
+    present(ctx).ok();
     Ok(())
   }
 }
