@@ -88,8 +88,7 @@ impl EventHandler for MyGame {
     Ok(())
   }
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-    clear(ctx);
-    set_background_color(ctx, Color::from_rgb_u32(0x000000));
+    clear(ctx, Color::from_rgb_u32(0x000000));
     for star in &mut self.stars {
       let k = 128.0 / star.z;
       let px: f32 = star.x * k + self.half_width;
