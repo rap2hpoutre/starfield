@@ -1,8 +1,8 @@
 [package]
 name = "starfield"
-version = "0.1.0"
-authors = ["rap2h <raphaelht@gmail.com>"]
+version = "0.5.0"
+authors = ["rap2h <raphaelht@gmail.com>, twohorus <john@r73.de>"]
 
 [dependencies]
-ggez = "0.4.4"
-rand = "0.6.5"
+ggez = "0.5.1"
+rand = "0.7.2"
