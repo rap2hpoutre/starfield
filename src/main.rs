@@ -95,13 +95,10 @@ impl EventHandler for MyGame {
       let py: f32 = star.y * k + self.half_height;
       if px >= 0.0 && px <= WIDTH as f32 && py >= 0.0 && py <= HEIGHT as f32 {
         let size = (1.0 - star.z / 32.0) * 5.0;
-        set_color(ctx, Color::from_rgb_u32(0xFFFFFF)).ok();
-        rectangle(
-          ctx,
-          Fill,
-          Rect::new(px, py, size, size),
-        )
-        .ok();
+        let color = [0.0, 0.0, 1.0, 1.0].into();
+        let rectangle =
+              ggez::graphics::Mesh::new_rectangle(ctx, ggez::graphics::DrawMode::fill(), Rect::new(px, py, size, size), color)?;
+          ggez::graphics::draw(ctx, &rectangle, (ggez::mint::Point2 { x: 0.0, y: 0.0 },)).ok();
       }
     }
     present(ctx);
