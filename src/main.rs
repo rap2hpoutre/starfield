@@ -11,8 +11,8 @@ use ggez::timer::check_update_time;
 
 use rand::Rng;
 
-const WIDTH: u32 = 320;
-const HEIGHT: u32 = 200;
+const WIDTH: f32 = 320.0;
+const HEIGHT: f32 = 200.0;
 const STARS_COUNT: u16 = 200;
 const XY_RANGE: i32 = 25;
 const MAX_DEPTH: u32 = 32;
