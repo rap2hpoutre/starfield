@@ -5,7 +5,7 @@ use ggez::conf;
 use ggez::event::{self, EventHandler};
 use ggez::graphics::clear;
 use ggez::graphics::DrawMode::Fill;
-use ggez::graphics::{present, rectangle, set_background_color, set_color, Color, Rect};
+use ggez::graphics::{present, Color, Rect};
 use ggez::{Context, ContextBuilder, GameResult};
 use ggez::timer::check_update_time;
 
