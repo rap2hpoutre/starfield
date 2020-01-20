@@ -4,15 +4,14 @@ extern crate rand;
 use ggez::conf;
 use ggez::event::{self, EventHandler};
 use ggez::graphics::clear;
-use ggez::graphics::DrawMode::Fill;
-use ggez::graphics::{present, rectangle, set_background_color, set_color, Color, Rect};
+use ggez::graphics::{present, Color, Rect};
 use ggez::{Context, ContextBuilder, GameResult};
 use ggez::timer::check_update_time;
 
 use rand::Rng;
 
-const WIDTH: u32 = 320;
-const HEIGHT: u32 = 200;
+const WIDTH: f32 = 320.0;
+const HEIGHT: f32 = 200.0;
 const STARS_COUNT: u16 = 200;
 const XY_RANGE: i32 = 25;
 const MAX_DEPTH: u32 = 32;
@@ -23,10 +22,10 @@ fn main() {
     .build()
     .expect("aieee, could not create ggez context!");
 
-  let mut my_game = MyGame::new(ctx);
+  let mut my_game = MyGame::new(&mut ctx.0);
 
   // Run!
-  match event::run(ctx, &mut my_game) {
+  match event::run(&mut ctx.0, &mut ctx.1, &mut my_game) {
     Ok(_) => println!("Exited cleanly."),
     Err(e) => println!("Error occured: {}", e),
   }
@@ -88,24 +87,20 @@ impl EventHandler for MyGame {
     Ok(())
   }
   fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-    clear(ctx);
-    set_background_color(ctx, Color::from_rgb_u32(0x000000));
+    clear(ctx, Color::from_rgb_u32(0x000000));
     for star in &mut self.stars {
       let k = 128.0 / star.z;
       let px: f32 = star.x * k + self.half_width;
       let py: f32 = star.y * k + self.half_height;
       if px >= 0.0 && px <= WIDTH as f32 && py >= 0.0 && py <= HEIGHT as f32 {
         let size = (1.0 - star.z / 32.0) * 5.0;
-        set_color(ctx, Color::from_rgb_u32(0xFFFFFF)).ok();
-        rectangle(
-          ctx,
-          Fill,
-          Rect::new(px, py, size, size),
-        )
-        .ok();
+        let color = [0.0, 0.0, 1.0, 1.0].into();
+        let rectangle =
+              ggez::graphics::Mesh::new_rectangle(ctx, ggez::graphics::DrawMode::fill(), Rect::new(px, py, size, size), color)?;
+          ggez::graphics::draw(ctx, &rectangle, (ggez::mint::Point2 { x: 0.0, y: 0.0 },)).ok();
       }
     }
-    present(ctx);
+    present(ctx).ok();
     Ok(())
   }
 }
