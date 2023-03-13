@@ -35,6 +35,7 @@ struct Star {
     x: f32,
     y: f32,
     z: f32,
+    color: Color,
 }
 
 impl Star {
@@ -43,6 +44,12 @@ impl Star {
             x: xy_range(),
             y: xy_range(),
             z: rand::thread_rng().gen_range(1, MAX_DEPTH) as f32,
+            color: MyGame::get_next_color(
+                //inclusive of low and exclusive of high ==> 0-255
+                rand::thread_rng().gen_range(0, 256) as u8,
+                rand::thread_rng().gen_range(0, 256) as u8,
+                rand::thread_rng().gen_range(0, 256) as u8,
+            ),
         }
     }
 }
@@ -69,6 +76,10 @@ impl MyGame {
             stars,
         }
     }
+
+    fn get_next_color(r: u8, g: u8, b: u8) -> Color {
+        Color::from_rgba(r, g, b, 255)
+    }
 }
 
 impl EventHandler for MyGame {
@@ -94,7 +105,7 @@ impl EventHandler for MyGame {
             let py: f32 = star.y * k + self.half_height;
             if px >= 0.0 && px <= WIDTH as f32 && py >= 0.0 && py <= HEIGHT as f32 {
                 let size = (1.0 - star.z / 32.0) * 5.0;
-                let color = [0.0, 0.0, 1.0, 1.0].into();
+                let color = star.color;
                 let rectangle = ggez::graphics::Mesh::new_rectangle(
                     ctx,
                     ggez::graphics::DrawMode::fill(),
