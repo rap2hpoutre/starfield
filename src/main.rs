@@ -66,7 +66,7 @@ impl MyGame {
         MyGame {
             half_width: WIDTH as f32 / 2.0,
             half_height: HEIGHT as f32 / 2.0,
-            stars: stars,
+            stars,
         }
     }
 }
