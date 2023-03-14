@@ -2,7 +2,9 @@
 name = "starfield"
 version = "0.5.0"
 authors = ["rap2h <raphaelht@gmail.com>, twohorus <john@r73.de>"]
+resolver = "2"
 
 [dependencies]
-ggez = "0.5.1"
+# Without audio feature
+ggez = "0.9.0-rc0"
 rand = "0.7.2"
